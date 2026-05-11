@@ -4,14 +4,15 @@
 
 // Globale
 let player1, player2;
-let map = [];
+let map;
 let players = [];
 
 function preload(){
   // called BEFORE SETUP. Won't conclude.
   // Until all loads are complete.
-  let temp1 = loadImage("assets/Map-0/player1");
-  let temp2 = loadImage("assets/Map-0/player2");  
+  let temp1 = loadImage("assets/Map-0/player1.png");
+  let temp2 = loadImage("assets/Map-0/player2.png");
+  map = loadImage("assets/Map-0/map.jpeg")  
   players.push(temp1, temp2);
 }
 
@@ -24,6 +25,7 @@ function setup() {
 
 function draw() {
   background(220);
+  image(map, 0,0);
   player1.action();
   player2.action();
 }
@@ -52,7 +54,7 @@ function tag(){
   // The player tag logic
 }
 
-function playerColistions(){
+function playerColisions(){
   // To handle any player collisions
 }
 
@@ -176,13 +178,10 @@ class player{
 
   show(){
     // this function will display the character
-    if(this.playerNumber === 1){
-      
-    }
-    else if(this.playerNumber === 2){
+    
+    image(players[this.playerNumber -1], this.x, this.y);
 
-    }
-    rect(this.pos.x,this.pos.y, this.playerSize,this.playerSize);
+    //rect(this.pos.x,this.pos.y, this.playerSize,this.playerSize);
   }
 
   action(){
