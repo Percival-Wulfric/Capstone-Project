@@ -6,6 +6,8 @@
 let player1, player2;
 let map;
 let players = [];
+let tagTime = 60; //Time befor a tag acurs in frames
+let time = 20 * 60; // The amount of time in frames that the game is played
 
 function preload(){
   // called BEFORE SETUP. Won't conclude.
@@ -19,15 +21,25 @@ function preload(){
 function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
-  player1 = new player(width/3, height/2, 0, 1, [255,0,0]);
-  player2 = new player(width/2, height/2, 0, 2, [0,0,255]);
+  player1 = new player(width/3, height/2, 0, 1, [255,0,0],0);
+  player2 = new player(width/2, height/2, 0, 2, [0,0,255],1);
 }
 
 function draw() {
+  tagTime--;
+  time --;
+  if(tagTime < 0) tagTime = 0;
+  if(!(time%60)){
+    print(time/60);
+  }
   background(220);
   image(map, 0,0);
   player1.action();
   player2.action();
+  tag();
+  if(time <= 0){
+    endScreen();
+  }
 }
 
 function startMenu(){
@@ -40,6 +52,8 @@ function pauseMenu(){
 
 function endScreen(){
   // The end screen for who won
+  player1.gameEnd();
+  player2.gameEnd();
 }
 
 function timer(){
@@ -52,6 +66,22 @@ function powerUps(){
 
 function tag(){
   // The player tag logic
+  let d = dist(player1.pos.x, player1.pos.y, player2.pos.x, player2.pos.y);
+  if(!tagTime){
+    if(d <= 40){
+      // IF the time has pased betwen tags and they tuch then it shoud be taged
+      if(player1.isTaged === 1){
+        player2.isTaged = 1; player1.isTaged = 0;
+      }
+      else if(player2.isTaged === 1){
+        player1.isTaged = 1; player2.isTaged = 0;
+      }
+      print("TAG");
+      tagTime = 60;
+    }
+  }
+  
+  
 }
 
 function playerColisions(){
@@ -67,17 +97,18 @@ function platforms(){
 }
 
 class player{
-  constructor(x,y,mood, playerNumber, color){
+  constructor(x,y,mood, playerNumber, color, isTaged){
     this.pos = createVector(x,y); //player position on screen
     this.vel = createVector(0,0); // current speed and direction
     this.grav = createVector(0,0.50); // downwords force
     this.mood = mood;
     this.playerNumber = playerNumber;
     this.jumpHeight = 10; // This value is the first value that worked
-    this.playerSize = 50;
+    this.playerSize = 100;
     this.isJumping = 1; // 0 = last frame jump presed, 1 = last frame jump was not preesed
     this.numJumps = 2; // number of jumps the charcter is alowed to perform
     this.color = color;
+    this.isTaged = isTaged; // 0 → not taged, 1 → taged 
   }
 
   movement(){
@@ -152,41 +183,31 @@ class player{
 
     
   }
-
-  jump(){
-    if(keyIsDown(UP_ARROW)){
-      // - is up because 0 to height
-      this.y -= this.jumpHeight;
-      if(this.y > height) this.y = height;
-    }
-  }
-
-  gravity(){
-    // This function gives the player gravity
-    //acceleration down
-    this.ySpeed += GRAVITY;
-    this.y = this.y + this.ySpeed;
-
-    if(this.y > height -this.playerSize) this.y = height -this.playerSize;
-    
-    //reduse slowly
-    this.ySpeed = this.ySpeed * 0.997;
-    
-  }
-    
   
-
   show(){
     // this function will display the character
     
-    image(players[this.playerNumber -1], this.x, this.y);
+    image(players[this.playerNumber -1], this.pos.x, this.pos.y);
 
-    //rect(this.pos.x,this.pos.y, this.playerSize,this.playerSize);
+    if(this.isTaged){
+      //if taged show the triangle above
+      fill(255);
+      rect(this.pos.x + 38, this.pos.y - 10,20);
+    }
   }
 
   action(){
     this.show();
     this.movement();
-    //this.gravity();
+  }
+
+  gameEnd(){
+    //Game ended state
+    if(this.isTaged){
+      print("NO I LOST")
+    }
+    else{
+      print("HAHAH I WON, GG")
+    }
   }
 } 
