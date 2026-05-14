@@ -3,11 +3,12 @@
 // May 4/26
 
 // Globale
-let player1, player2;
-let map;
 let players = [];
+let map;
+let playersImgs = [];
 let tagTime = 60; //Time befor a tag acurs in frames
 let time = 20 * 60; // The amount of time in frames that the game is played
+let numPlayers = 2;
 
 function preload(){
   // called BEFORE SETUP. Won't conclude.
@@ -15,31 +16,26 @@ function preload(){
   let temp1 = loadImage("assets/Map-0/player1.png");
   let temp2 = loadImage("assets/Map-0/player2.png");
   map = loadImage("assets/Map-0/map.jpeg")  
-  players.push(temp1, temp2);
+  playersImgs.push(temp1, temp2);
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
-  player1 = new player(width/3, height/2, 0, 1, [255,0,0],0);
-  player2 = new player(width/2, height/2, 0, 2, [0,0,255],1);
+  for(let i = 0; i < numPlayers; i++){
+    players.push(new Player(width/2, height/2, 0, i, [255,0,0],0));
+  }
+  players[int(random(0,numPlayers))].isTaged = 1;
 }
 
 function draw() {
-  tagTime--;
-  time --;
-  if(tagTime < 0) tagTime = 0;
-  if(!(time%60)){
-    print(time/60);
-  }
+  timer();
   background(220);
   image(map, 0,0);
-  player1.action();
-  player2.action();
-  tag();
-  if(time <= 0){
-    endScreen();
+  for(let p in players){
+    players[p].action();
   }
+  tag();
 }
 
 function startMenu(){
@@ -52,12 +48,26 @@ function pauseMenu(){
 
 function endScreen(){
   // The end screen for who won
-  player1.gameEnd();
-  player2.gameEnd();
+  for(let p in players){
+    players[p].gameEnd();
+  }
 }
 
 function timer(){
-  // This function is to make the timer
+  // This function is responsable for all time related code
+  tagTime--; //for taging 
+  time --; // game time
+  if(tagTime < 0) tagTime = 0; // reset tag time to reuse
+
+  if(!(time%60)){
+    // prints the time every 1 sec so 60 frames
+    print(time/60);
+  }
+
+  if(time <= 0){
+    // if the game time is over then the game is over
+    endScreen();
+  }
 }
 
 function powerUps(){
@@ -66,15 +76,18 @@ function powerUps(){
 
 function tag(){
   // The player tag logic
-  let d = dist(player1.pos.x, player1.pos.y, player2.pos.x, player2.pos.y);
+
+  // needs to be updated to work with multiple players
+
+  let d = dist(players[0].pos.x, players[0].pos.y, players[1].pos.x, players[1].pos.y);
   if(!tagTime){
     if(d <= 40){
       // IF the time has pased betwen tags and they tuch then it shoud be taged
-      if(player1.isTaged === 1){
-        player2.isTaged = 1; player1.isTaged = 0;
+      if(players[0].isTaged === 1){
+        players[1].isTaged = 1; players[0].isTaged = 0;
       }
-      else if(player2.isTaged === 1){
-        player1.isTaged = 1; player2.isTaged = 0;
+      else if(players[1].isTaged === 1){
+        players[0].isTaged = 1; players[1].isTaged = 0;
       }
       print("TAG");
       tagTime = 60;
@@ -96,103 +109,112 @@ function platforms(){
 
 }
 
-class player{
+class Player{
   constructor(x,y,mood, playerNumber, color, isTaged){
     this.pos = createVector(x,y); //player position on screen
     this.vel = createVector(0,0); // current speed and direction
     this.grav = createVector(0,0.50); // downwords force
     this.mood = mood;
     this.playerNumber = playerNumber;
-    this.jumpHeight = 10; // This value is the first value that worked
-    this.playerSize = 100;
+    this.playerSize = 200; 
+    this.jumpHeight = this.playerSize/14; // This value is the first value that worked
     this.isJumping = 1; // 0 = last frame jump presed, 1 = last frame jump was not preesed
     this.numJumps = 2; // number of jumps the charcter is alowed to perform
     this.color = color;
     this.isTaged = isTaged; // 0 → not taged, 1 → taged 
+    this.baseSpeed = 8;
+    this.boost = 1;
+    this.gameOver = 1; // 1 → means game is not over, 0 → game is over 
   }
 
   movement(){
     // This function will handle all movement
-    this.vel.add(this.grav);
-    this.pos.add(this.vel);
 
-    if(this.playerNumber === 1){
-      if(keyIsDown(LEFT_ARROW)){
-        this.vel.x = -6;
-      }
-      if(keyIsDown(RIGHT_ARROW)){
-        this.vel.x = 6;
-      }
-      
-      if(keyIsDown(DOWN_ARROW)){
-        // If the player has a anilitey to go down they can
-
-      }
-
-      if(keyIsDown(UP_ARROW)){
-        if(this.numJumps > 0 && !this.isJumping){
-          this.vel.y = -this.jumpHeight;
-          this.numJumps -= 1;
+    if(this.gameOver){
+      // cant move if game is over
+      this.vel.add(this.grav);
+      this.pos.add(this.vel);
+  
+      if(this.playerNumber === 0){
+        if(keyIsDown(LEFT_ARROW)){
+          if(this.isTaged) this.vel.x = -(this.baseSpeed + this.boost);
+          else this.vel.x = -this.baseSpeed;
         }
-      }
-
-      if(!(keyIsDown(RIGHT_ARROW) || keyIsDown(LEFT_ARROW) || keyIsDown(UP_ARROW) || keyIsDown(DOWN_ARROW))){
-        // Stop movemnet if the player is not hiting any keys
-        this.vel.x = 0;
-      }
-      this.isJumping = keyIsDown(UP_ARROW);
-      //print(this.isJumping);
-    }
-
-    if(this.playerNumber === 2){
-      if(keyIsDown(65)){
-        this.vel.x = -6;
-      }
-      if(keyIsDown(68)){
-        this.vel.x = 6;
-      }
-      
-      if(keyIsDown(83)){
-        // If the player has a anilitey to go down they can
-
-      }
-
-      if(keyIsDown(87)){
-        if(this.numJumps > 0 && !this.isJumping){
-          this.vel.y = -this.jumpHeight;
-          this.numJumps -= 1;
+        if(keyIsDown(RIGHT_ARROW)){
+          if(this.isTaged) this.vel.x = this.baseSpeed + this.boost;
+          else this.vel.x = this.baseSpeed;
         }
+        
+        if(keyIsDown(DOWN_ARROW)){
+          // If the player has a anilitey to go down they can
+  
+        }
+  
+        if(keyIsDown(UP_ARROW)){
+          if(this.numJumps > 0 && !this.isJumping){
+            this.vel.y = -this.jumpHeight;
+            this.numJumps -= 1;
+          }
+        }
+  
+        if(!(keyIsDown(RIGHT_ARROW) || keyIsDown(LEFT_ARROW) || keyIsDown(UP_ARROW) || keyIsDown(DOWN_ARROW))){
+          // Stop movemnet if the player is not hiting any keys
+          this.vel.x = 0;
+        }
+        this.isJumping = keyIsDown(UP_ARROW);
+        
       }
-
-      if(!(keyIsDown(87) || keyIsDown(83) || keyIsDown(68) || keyIsDown(65))){
-        // Stop movemnet if the player is not hiting any keys
-        this.vel.x = 0;
+  
+      if(this.playerNumber === 1){
+        if(keyIsDown(65)){
+          if(this.isTaged) this.vel.x = -(this.baseSpeed + this.boost);
+          else this.vel.x = -this.baseSpeed;
+        }
+        if(keyIsDown(68)){
+          if(this.isTaged) this.vel.x = this.baseSpeed + this.boost;
+          else this.vel.x = this.baseSpeed;
+        }
+        
+        if(keyIsDown(83)){
+          // If the player has a anilitey to go down they can
+  
+        }
+  
+        if(keyIsDown(87)){
+          if(this.numJumps > 0 && !this.isJumping){
+            this.vel.y = -this.jumpHeight;
+            this.numJumps -= 1;
+          }
+        }
+  
+        if(!(keyIsDown(87) || keyIsDown(83) || keyIsDown(68) || keyIsDown(65))){
+          // Stop movemnet if the player is not hiting any keys
+          this.vel.x = 0;
+        }
+        this.isJumping = keyIsDown(87);
+        
       }
-      this.isJumping = keyIsDown(87);
-      //print(this.isJumping);
+  
+  
+      if((this.pos.y > height -this.playerSize) && this.vel.y > 0){ 
+        // the and condition makes shure I am actuly falling to alow me to also jump
+        this.pos.y = height -this.playerSize;
+        this.vel.y = 0;
+        this.numJumps = 2;
+      }
     }
-
-
-    if((this.pos.y > height -this.playerSize) && this.vel.y > 0){ 
-      // the and condition makes shure I am actuly falling to alow me to also jump
-      this.pos.y = height -this.playerSize;
-      this.vel.y = 0;
-      this.numJumps = 2;
-    }
-
-
     
   }
   
   show(){
     // this function will display the character
     
-    image(players[this.playerNumber -1], this.pos.x, this.pos.y);
-
+    image(playersImgs[this.playerNumber], this.pos.x, this.pos.y);
+    playersImgs[this.playerNumber].resize(this.playerSize, this.playerSize);
     if(this.isTaged){
       //if taged show the triangle above
       fill(255);
-      rect(this.pos.x + 38, this.pos.y - 10,20);
+      rect(this.pos.x + (this.playerSize/2 - 10), this.pos.y - 10, this.playerSize/8);
     }
   }
 
@@ -203,6 +225,7 @@ class player{
 
   gameEnd(){
     //Game ended state
+    this.gameOver = 0;
     if(this.isTaged){
       print("NO I LOST")
     }
