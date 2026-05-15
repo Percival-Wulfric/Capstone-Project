@@ -7,7 +7,7 @@ let players = [];
 let map;
 let playersImgs = [];
 let tagTime = 60; //Time befor a tag acurs in frames
-let time = 20 * 60; // The amount of time in frames that the game is played
+let time = 100 * 60; // The amount of time in frames that the game is played
 let numPlayers = 2;
 
 function preload(){
@@ -35,7 +35,10 @@ function draw() {
   for(let p in players){
     players[p].action();
   }
-  tag();
+  //tag();
+  textSize(50);
+  fill(0);
+  text(mouseX + ", "+ mouseY , mouseX, mouseY);
 }
 
 function startMenu(){
@@ -59,15 +62,19 @@ function timer(){
   time --; // game time
   if(tagTime < 0) tagTime = 0; // reset tag time to reuse
 
-  if(!(time%60)){
-    // prints the time every 1 sec so 60 frames
-    print(time/60);
-  }
-
   if(time <= 0){
     // if the game time is over then the game is over
     endScreen();
   }
+
+  else{
+    if(!(time%60)){
+      // prints the time every 1 sec so 60 frames
+      print(time/60);
+    }
+  
+  }
+   
 }
 
 function powerUps(){
@@ -137,12 +144,33 @@ class Player{
   
       if(this.playerNumber === 0){
         if(keyIsDown(LEFT_ARROW)){
-          if(this.isTaged) this.vel.x = -(this.baseSpeed + this.boost);
-          else this.vel.x = -this.baseSpeed;
+          if(this.isTaged){
+            this.vel.x = -(this.baseSpeed + this.boost);
+          } 
+          else{
+            this.vel.x = -this.baseSpeed;
+          }
+          
+          print(this.pos.x);
+
+          if(this.pos.x < 0 - this.playerSize/3) {
+            // Stops player from going off screen uses the player size to alow for the player
+            // to hit the edge
+            this.pos.x = 0 - this.playerSize/3;
+            this.vel.x = 0;
+            
+          }
         }
+
         if(keyIsDown(RIGHT_ARROW)){
           if(this.isTaged) this.vel.x = this.baseSpeed + this.boost;
           else this.vel.x = this.baseSpeed;
+          if(this.pos.x > width - (this.playerSize/3) * 2) {
+            // Stops player from going off screen uses the player size to alow for the player
+            // to hit the edge
+            this.pos.x = width - (this.playerSize/3) * 2;
+            this.vel.x = 0;
+          }
         }
         
         if(keyIsDown(DOWN_ARROW)){
@@ -169,10 +197,23 @@ class Player{
         if(keyIsDown(65)){
           if(this.isTaged) this.vel.x = -(this.baseSpeed + this.boost);
           else this.vel.x = -this.baseSpeed;
+          if(this.pos.x < 0 - this.playerSize/3) {
+            // Stops player from going off screen uses the player size to alow for the player
+            // to hit the edge
+            this.pos.x = 0 - this.playerSize/3;
+            this.vel.x = 0;
+            
+          }
         }
         if(keyIsDown(68)){
           if(this.isTaged) this.vel.x = this.baseSpeed + this.boost;
           else this.vel.x = this.baseSpeed;
+          if(this.pos.x > width - (this.playerSize/3) * 2) {
+            // Stops player from going off screen uses the player size to alow for the player
+            // to hit the edge
+            this.pos.x = width - (this.playerSize/3) * 2;
+            this.vel.x = 0;
+          }
         }
         
         if(keyIsDown(83)){
@@ -194,7 +235,90 @@ class Player{
         this.isJumping = keyIsDown(87);
         
       }
+      
+      if(this.playerNumber === 2){
+        if(keyIsDown(74)){
+          if(this.isTaged) this.vel.x = -(this.baseSpeed + this.boost);
+          else this.vel.x = -this.baseSpeed;
+          if(this.pos.x < 0 - this.playerSize/3) {
+            // Stops player from going off screen uses the player size to alow for the player
+            // to hit the edge
+            this.pos.x = 0 - this.playerSize/3;
+            this.vel.x = 0;
+            
+          }
+        }
+        if(keyIsDown(76)){
+          if(this.isTaged) this.vel.x = this.baseSpeed + this.boost;
+          else this.vel.x = this.baseSpeed;
+          if(this.pos.x > width - (this.playerSize/3) * 2) {
+            // Stops player from going off screen uses the player size to alow for the player
+            // to hit the edge
+            this.pos.x = width - (this.playerSize/3) * 2;
+            this.vel.x = 0;
+          }
+        }
+        
+        if(keyIsDown(75)){
+          // If the player has a anilitey to go down they can
   
+        }
+  
+        if(keyIsDown(73)){
+          if(this.numJumps > 0 && !this.isJumping){
+            this.vel.y = -this.jumpHeight;
+            this.numJumps -= 1;
+          }
+        }
+  
+        if(!(keyIsDown(74) || keyIsDown(76) || keyIsDown(73) || keyIsDown(75))){
+          // Stop movemnet if the player is not hiting any keys
+          this.vel.x = 0;
+        }
+        this.isJumping = keyIsDown(87);
+      }
+
+      if(this.playerNumber === 3){
+        if(keyIsDown(70)){
+          if(this.isTaged) this.vel.x = -(this.baseSpeed + this.boost);
+          else this.vel.x = -this.baseSpeed;
+          if(this.pos.x < 0 - this.playerSize/3) {
+            // Stops player from going off screen uses the player size to alow for the player
+            // to hit the edge
+            this.pos.x = 0 - this.playerSize/3;
+            this.vel.x = 0;
+            
+          }
+        }
+        if(keyIsDown(72)){
+          if(this.isTaged) this.vel.x = this.baseSpeed + this.boost;
+          else this.vel.x = this.baseSpeed;
+          if(this.pos.x > width - (this.playerSize/3) * 2) {
+            // Stops player from going off screen uses the player size to alow for the player
+            // to hit the edge
+            this.pos.x = width - (this.playerSize/3) * 2;
+            this.vel.x = 0;
+          }
+        }
+        
+        if(keyIsDown(71)){
+          // If the player has a an abilitey to go down they can
+  
+        }
+  
+        if(keyIsDown(84)){
+          if(this.numJumps > 0 && !this.isJumping){
+            this.vel.y = -this.jumpHeight;
+            this.numJumps -= 1;
+          }
+        }
+  
+        if(!(keyIsDown(84) || keyIsDown(70) || keyIsDown(72) || keyIsDown(71))){
+          // Stop movemnet if the player is not hiting any keys
+          this.vel.x = 0;
+        }
+        this.isJumping = keyIsDown(87);
+      }
   
       if((this.pos.y > height -this.playerSize) && this.vel.y > 0){ 
         // the and condition makes shure I am actuly falling to alow me to also jump
@@ -225,12 +349,14 @@ class Player{
 
   gameEnd(){
     //Game ended state
-    this.gameOver = 0;
-    if(this.isTaged){
-      print("NO I LOST")
-    }
-    else{
-      print("HAHAH I WON, GG")
+    if(this.gameOver){
+      if(this.isTaged){
+        print("NO I LOST")
+      }
+      else{
+        print("HAHAH I WON, GG")
+      }
+      this.gameOver = 0;
     }
   }
 } 
