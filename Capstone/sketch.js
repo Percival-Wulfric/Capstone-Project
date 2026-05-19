@@ -35,7 +35,7 @@ function draw() {
   for(let p in players){
     players[p].action();
   }
-  //tag();
+  tag();
   textSize(50);
   fill(0);
   text(mouseX + ", "+ mouseY , mouseX, mouseY);

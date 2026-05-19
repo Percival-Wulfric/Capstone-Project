@@ -6,6 +6,8 @@
 let platformsLocation = [];
 let platform = []
 let platformColor;
+let platforms = [];
+let pixelStart = 0;
 
 function preload(){
   // called BEFORE SETUP. Won't conclude.
@@ -16,7 +18,7 @@ function preload(){
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  platformColor = [1, 255, 255];
+  platformColor = [0, 255, 255];
   detectPlatforms();
 }
 
@@ -36,10 +38,13 @@ function detectPlatforms() {
   let green = platformColor[1];
   let blue  = platformColor[2];
 
+  // Geting all the x,y for the colored pixels
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
+      //Visite every pixel
 
-      let pixelStart = (y * width + x) * 4;
+      pixelStart = (y * width + x) * 4;
+      
 
       let pixelRed   = pixels[pixelStart + 0];
       let pixelGreen = pixels[pixelStart + 1];
@@ -51,5 +56,24 @@ function detectPlatforms() {
 
     }
   }
+
+  //Translating Pixel x,y to width and height
+  
+  // For width
+  let w = 0;
+  for(let c = 1; c < 1000; c++){
+    let curent = platformsLocation[c][0];
+    let previous = platformsLocation[c-1][0];
+    let firstX;
+    print(curent);
+    
+    if(curent-1 === previous){
+      w++;
+    }
+    else{
+      platforms.push(w);
+    }
+  }
+  print("platforms: " + platforms);
 
 }
