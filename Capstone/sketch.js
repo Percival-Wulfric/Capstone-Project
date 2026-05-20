@@ -8,15 +8,20 @@ let map;
 let playersImgs = [];
 let tagTime = 60; //Time befor a tag acurs in frames
 let time = 100 * 60; // The amount of time in frames that the game is played
-let numPlayers = 2;
+let numPlayers = 4;
+let playerTaged;
+let platformImg = [];
+let platformColor;
+let platform = [];
 
 function preload(){
   // called BEFORE SETUP. Won't conclude.
   // Until all loads are complete.
-  let temp1 = loadImage("assets/Map-0/player1.png");
-  let temp2 = loadImage("assets/Map-0/player2.png");
-  map = loadImage("assets/Map-0/map.jpeg")  
-  playersImgs.push(temp1, temp2);
+  for(let i = 1; i <= numPlayers; i++){
+    playersImgs.push(loadImage("assets/Map-0/player"+ i + ".png"));
+  }
+  map = loadImage("assets/Map-0/map.jpeg");
+  platformImg = loadImage("assets/Map-0/platform.png"); 
 }
 
 function setup() {
@@ -25,7 +30,11 @@ function setup() {
   for(let i = 0; i < numPlayers; i++){
     players.push(new Player(width/2, height/2, 0, i, [255,0,0],0));
   }
-  players[int(random(0,numPlayers))].isTaged = 1;
+  let r = int(random(0,numPlayers));
+  players[r].isTaged = 1;
+  playerTaged = r;
+  platformColor = [0, 255, 255];
+  platform = detectPlatforms(platformColor, platformImg);
 }
 
 function draw() {
@@ -84,24 +93,26 @@ function powerUps(){
 function tag(){
   // The player tag logic
 
-  // needs to be updated to work with multiple players
+  // UPDATED CODE → Works with multaple players
 
-  let d = dist(players[0].pos.x, players[0].pos.y, players[1].pos.x, players[1].pos.y);
   if(!tagTime){
-    if(d <= 40){
-      // IF the time has pased betwen tags and they tuch then it shoud be taged
-      if(players[0].isTaged === 1){
-        players[1].isTaged = 1; players[0].isTaged = 0;
+    // time btween tags has passed
+    for(let p in players){
+      if(!(p === playerTaged)){
+        // compare distance of taged player to everyother player
+        let d = dist(players[playerTaged].pos.x, players[playerTaged].pos.y, players[p].pos.x, players[p].pos.y);
+        if(d <= 40){
+          // IF the time has pased betwen tags and they tuch then it shoud be taged
+          players[p].isTaged = 1; 
+          players[playerTaged].isTaged = 0;
+          print("TAG");
+          tagTime = 60;
+          playerTaged = p;
+          break;
+        }
       }
-      else if(players[1].isTaged === 1){
-        players[0].isTaged = 1; players[1].isTaged = 0;
-      }
-      print("TAG");
-      tagTime = 60;
     }
   }
-  
-  
 }
 
 function playerColisions(){
@@ -113,7 +124,7 @@ function platforms(){
   // Player intractions with platform
   // platform hit boxes
 
-
+  
 }
 
 class Player{

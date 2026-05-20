@@ -3,12 +3,8 @@
 // 17-05-2026
 
 // Globbles
-let platformsLocation = []; 
 let platform = []; // Image
 let platformColor;
-let platforms = []; // Final output -> [[x, y, width, height], [x, y, width, height], .....]
-let pixelStart = 0;
-let grid;
 
 function preload(){
   // called BEFORE SETUP. Won't conclude.
@@ -19,8 +15,8 @@ function preload(){
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  platformColor = [1, 255, 255];
-  detectPlatforms();
+  platformColor = [0, 255, 255];
+  detectPlatforms(platformColor, platform);
 }
 
 function draw() {
@@ -29,9 +25,10 @@ function draw() {
   text(mouseX + ", " + mouseY, mouseX, mouseY);
 }
 
-function detectPlatforms() {
+function detectPlatforms(platformColor, platform) {
   // This function shoud "dinamicly" detect the platforms
   // Saving there information in platformsLocation
+  let platformsLocation = []; 
 
   image(platform, 0, 0);
   loadPixels();
@@ -45,7 +42,7 @@ function detectPlatforms() {
     for (let x = 0; x < width; x++) {
       //Visite every pixel
 
-      pixelStart = (y * width + x) * 4;
+      let pixelStart = (y * width + x) * 4;
       
 
       let pixelRed   = pixels[pixelStart + 0];
@@ -60,7 +57,7 @@ function detectPlatforms() {
   }
 
   // Build a grid so we can check is there a pixel at x,y 
-  grid = []; // Undifined -> false / not there
+  let grid = []; // Undifined -> false / not there
   for (let i = 0; i < platformsLocation.length; i++) {
     let x = platformsLocation[i][0];
     let y = platformsLocation[i][1];
@@ -72,6 +69,7 @@ function detectPlatforms() {
   }
 
   // Find rectangels
+  let platforms = []; // Final output -> [[x, y, width, height], [x, y, width, height], .....]
   
   for (let i = 0; i < platformsLocation.length; i++) {
     let x = platformsLocation[i][0];
@@ -107,6 +105,7 @@ function detectPlatforms() {
   }
 
   print(platforms);
+  return platforms;
 }
 
 
