@@ -3,11 +3,12 @@
 // 17-05-2026
 
 // Globbles
-let platformsLocation = [];
-let platform = []
+let platformsLocation = []; 
+let platform = []; // Image
 let platformColor;
-let platforms = [];
+let platforms = []; // Final output -> [[x, y, width, height], [x, y, width, height], .....]
 let pixelStart = 0;
+let grid;
 
 function preload(){
   // called BEFORE SETUP. Won't conclude.
@@ -18,13 +19,14 @@ function preload(){
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  platformColor = [0, 255, 255];
+  platformColor = [1, 255, 255];
   detectPlatforms();
 }
 
 function draw() {
   background(220);
-  //image(platform,0,0);
+  image(platform,0,0);
+  text(mouseX + ", " + mouseY, mouseX, mouseY);
 }
 
 function detectPlatforms() {
@@ -57,23 +59,78 @@ function detectPlatforms() {
     }
   }
 
-  //Translating Pixel x,y to width and height
-  
-  // For width
-  let w = 0;
-  for(let c = 1; c < 1000; c++){
-    let curent = platformsLocation[c][0];
-    let previous = platformsLocation[c-1][0];
-    let firstX;
-    print(curent);
+  // Build a grid so we can check is there a pixel at x,y 
+  grid = []; // Undifined -> false / not there
+  for (let i = 0; i < platformsLocation.length; i++) {
+    let x = platformsLocation[i][0];
+    let y = platformsLocation[i][1];
     
-    if(curent-1 === previous){
-      w++;
-    }
-    else{
-      platforms.push(w);
+    if (!grid[y]) grid[y] = [];
+    // If this row -> y does not exist yat, create it
+
+    grid[y][x] = true; // Platform is there
+  }
+
+  // Find rectangels
+  
+  for (let i = 0; i < platformsLocation.length; i++) {
+    let x = platformsLocation[i][0];
+    let y = platformsLocation[i][1];
+
+    // a top laft cornar has no pixel to its left and non above
+    let noLeft, noAbove;
+
+    if(!grid[y][x - 1]) noLeft = true;
+    else noLeft = false;
+    
+    if(!(grid[y - 1] && grid[y - 1][x])) noAbove = true;
+    else noAbove = false;
+
+    if (noLeft && noAbove) {
+      // Calculating width and height from top corner
+
+      let w = 0;
+      while (grid[y][x + w]) {
+        // while theres a pixel to the right count the steps
+        w++;
+      }
+
+      let h = 0;
+      while (grid[y + h] && grid[y + h][x]){
+        // keep stepping DOWN!
+        // while there is a pixel down count steps
+        h++;
+      }
+
+      platforms.push([x, y, w, h]); //UPDATE PLATFORMS
     }
   }
-  print("platforms: " + platforms);
 
+  print(platforms);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
