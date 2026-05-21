@@ -13,6 +13,7 @@ let playerTaged;
 let platformImg = [];
 let platformColor;
 let platform = [];
+let t; //time in seconds
 
 function preload(){
   // called BEFORE SETUP. Won't conclude.
@@ -25,7 +26,7 @@ function preload(){
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(1912, 1076);
   noStroke();
   for(let i = 0; i < numPlayers; i++){
     players.push(new Player(width/2, height/2, 0, i, [255,0,0],0));
@@ -44,10 +45,14 @@ function draw() {
   for(let p in players){
     players[p].action();
   }
-  tag();
+
+  if(time) tag();
+  if(!(time%60)){
+    t = time/60
+    if(t<0) t = 0;
+  }
   textSize(50);
-  fill(0);
-  text(mouseX + ", "+ mouseY , mouseX, mouseY);
+  text(t, width/2, 100);
 }
 
 function startMenu(){
