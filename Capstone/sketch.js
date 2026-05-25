@@ -27,6 +27,7 @@ function preload(){
 
 function setup() {
   createCanvas(1912, 1076);
+  pixelDensity(1);
   noStroke();
   for(let i = 0; i < numPlayers; i++){
     players.push(new Player(width/2, height/2, 0, i, [255,0,0],0));
@@ -34,7 +35,8 @@ function setup() {
   let r = int(random(0,numPlayers));
   players[r].isTaged = 1;
   playerTaged = r;
-  platformColor = [1, 255, 255];
+  platformColor = [0, 255, 255];
+  
   platform = detectPlatforms(platformColor, platformImg);
 }
 
@@ -384,6 +386,12 @@ class Player{
           this.vel.y = 0;
         }
       }
+
+
+      // Check if player is Virticaly within the platform
+      //let overlapY = playerRight > pX && playerLeft < pX + pW;
+
+      
     }
   }
 
