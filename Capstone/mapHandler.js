@@ -11,11 +11,11 @@ function detectPlatforms(platformColor, platform) {
     let blue  = platformColor[2];
   
     // Geting all the x,y for the colored pixels
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
+    for (let y = 0; y < platform.height; y++) {
+      for (let x = 0; x < platform.width; x++) {
         //Visite every pixel
   
-        let pixelStart = (y * width + x) * 4;
+        let pixelStart = (y * platform.width + x) * 4;
         
   
         let pixelRed   = pixels[pixelStart + 0];

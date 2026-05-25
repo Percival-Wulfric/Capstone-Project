@@ -8,7 +8,7 @@ let map;
 let playersImgs = [];
 let tagTime = 60; //Time befor a tag acurs in frames
 let time = 100 * 60; // The amount of time in frames that the game is played
-let numPlayers = 4;
+let numPlayers = 2;
 let playerTaged;
 let platformImg = [];
 let platformColor;
@@ -34,14 +34,14 @@ function setup() {
   let r = int(random(0,numPlayers));
   players[r].isTaged = 1;
   playerTaged = r;
-  platformColor = [0, 255, 255];
+  platformColor = [1, 255, 255];
   platform = detectPlatforms(platformColor, platformImg);
 }
 
 function draw() {
   timer();
   background(220);
-  image(map, 0,0);
+  image(platformImg, 0,0);
   for(let p in players){
     players[p].action();
   }
@@ -51,7 +51,7 @@ function draw() {
     t = time/60
     if(t<0) t = 0;
   }
-  textSize(50);
+  textSize(50); fill(0);
   text(t, width/2, 100);
 }
 
@@ -124,23 +124,16 @@ function playerColisions(){
   // To handle any player collisions
 }
 
-function platforms(){
-  // This function handless all platform related things
-  // Player intractions with platform
-  // platform hit boxes
-
-  
-}
 
 class Player{
   constructor(x,y,mood, playerNumber, color, isTaged){
     this.pos = createVector(x,y); //player position on screen
     this.vel = createVector(0,0); // current speed and direction
-    this.grav = createVector(0,0.50); // downwords force
+    this.grav = createVector(0,0.30); // downwords force
     this.mood = mood;
     this.playerNumber = playerNumber;
-    this.playerSize = 200; 
-    this.jumpHeight = this.playerSize/14; // This value is the first value that worked
+    this.playerSize = 100; 
+    this.jumpHeight = 10; // This value is the first value that worked
     this.isJumping = 1; // 0 = last frame jump presed, 1 = last frame jump was not preesed
     this.numJumps = 2; // number of jumps the charcter is alowed to perform
     this.color = color;
@@ -353,14 +346,51 @@ class Player{
     playersImgs[this.playerNumber].resize(this.playerSize, this.playerSize);
     if(this.isTaged){
       //if taged show the triangle above
-      fill(255);
+      fill(0);
       rect(this.pos.x + (this.playerSize/2 - 10), this.pos.y - 10, this.playerSize/8);
+    }
+  }
+
+  platformCollision() {
+    for (let i = 0; i < platform.length; i++) {
+      //Platform
+      let pX = platform[i][0];
+      let pY = platform[i][1];
+      let pW = platform[i][2];
+      let pH = platform[i][3];
+
+      //Players edge
+      let playerLeft   = this.pos.x;
+      let playerRight  = this.pos.x + this.playerSize;
+      let playerTop    = this.pos.y;
+      let playerBottom = this.pos.y + this.playerSize;
+
+      // Check if player is horizontally within the platform
+      let overlapX = playerRight > pX && playerLeft < pX + pW;
+
+      // Landing on top of platform
+      if (overlapX && this.vel.y > 0) {
+        if (playerBottom >= pY && playerBottom <= pY + pH) {
+          this.pos.y = pY - this.playerSize; // sit on top
+          this.vel.y = 0;
+          this.numJumps = 2; // reset jumps
+        }
+      }
+
+      // Hitting the BOTTOM of platform (player is jumping up)
+      if (overlapX && this.vel.y < 0) {
+        if (playerTop <= (pY + pH) && playerTop >= pY) {
+          this.pos.y = pY + pH; // bump head down
+          this.vel.y = 0;
+        }
+      }
     }
   }
 
   action(){
     this.show();
     this.movement();
+    this.platformCollision();
   }
 
   gameEnd(){
