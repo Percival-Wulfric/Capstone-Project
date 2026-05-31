@@ -35,7 +35,7 @@ function setup() {
   let r = int(random(0,numPlayers));
   players[r].isTaged = 1;
   playerTaged = r;
-  platformColor = [0, 255, 255];
+  platformColor = [1, 255, 255];
   
   platform = detectPlatforms(platformColor, platformImg);
 }
@@ -389,7 +389,25 @@ class Player{
 
 
       // Check if player is Virticaly within the platform
-      //let overlapY = playerRight > pX && playerLeft < pX + pW;
+      
+      let overlapY = playerBottom > pY + 5 && playerTop < pY + pH; //+5 temp fix for old sprites, the player has to be 5 px in the top in order for the 
+      // colition to count 
+
+      // Hitting LEFT side of platform -> player verticly aligned and also movig right
+      if (overlapY && this.vel.x > 0) {
+        if (playerRight >= pX && playerRight <= pX + pW) {
+          this.pos.x = pX - this.playerSize; // set to left edge
+          this.vel.x = 0;
+        }
+      }
+
+      // Hitting RIGHT side of platform -> player verticly aligned and also movig left
+      if (overlapY && this.vel.x < 0) {
+        if (playerLeft <= pX + pW && playerLeft >= pX) {
+          this.pos.x = pX + pW; // set to right edge
+          this.vel.x = 0;
+        }
+      }
 
       
     }
