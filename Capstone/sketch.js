@@ -4,7 +4,7 @@
 
 // Globale
 let players = [];
-let map;
+let map = 1;
 let playersImgs = [];
 let tagTime = 60; //Time befor a tag acurs in frames
 let time = 100 * 60; // The amount of time in frames that the game is played
@@ -15,14 +15,37 @@ let platformColor;
 let platform = [];
 let t; //time in seconds
 
+// player imgs 2d arays for animation
+let player1Imgs = [[], [], []]; // idel, jump, run
+let player2Imgs = [[], [], []];
+let player3Imgs = [[], [], []];
+let player4Imgs = [[], [], []];
+let numJumpImgs = 16;
+let numIdelImgs = 4;
+let numRunImgs = 16;
+
 function preload(){
   // called BEFORE SETUP. Won't conclude.
   // Until all loads are complete.
-  for(let i = 1; i <= numPlayers; i++){
-    playersImgs.push(loadImage("assets/Map-0/player"+ i + ".png"));
+  // for(let i = 1; i <= numPlayers; i++){
+  //   playersImgs.push(loadImage("assets/Map-0/player"+ i + ".png"));
+  // }
+  map = loadImage("assets/Map-" + map +"/map.jpg");
+  platformImg = loadImage("assets/Map-" + map +"/platforms.jpg");
+  
+  // player 1 (Darth Vader)
+  for(let n = 1; n <= numPlayers; n++){
+    for(let r = 1; r <= numJumpImgs; r++){
+        player1Imgs[1].push(loadImage("assets/Map-" + map +"/Player (" + n + ")/jump/jump ("+ r +").png"));
+    }
   }
-  map = loadImage("assets/Map-0/map.jpeg");
-  platformImg = loadImage("assets/Map-0/platform.png"); 
+  
+  // for(let r = 1; r <= numIdelImgs; r++){
+  //   player1Imgs[0].push(loadImage("assets/Map-1/Darth Vader/idle/idle ("+ r + ").png"));
+  // }
+  // for(let r = 1; r <= numRunImgs; r++){
+  //   player1Imgs[2].push(loadImage("assets/Map-1/Darth Vader/run/run ("+ r + ").png"));
+  // }
 }
 
 function setup() {
@@ -43,7 +66,7 @@ function setup() {
 function draw() {
   timer();
   background(220);
-  image(platformImg, 0,0);
+  image(map, 0,0);
   for(let p in players){
     players[p].action();
   }
