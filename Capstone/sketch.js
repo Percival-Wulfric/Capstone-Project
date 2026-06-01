@@ -4,11 +4,10 @@
 
 // Globale
 let players = [];
-let map = 1;
-let playersImgs = [];
+let map;
 let tagTime = 60; //Time befor a tag acurs in frames
 let time = 100 * 60; // The amount of time in frames that the game is played
-let numPlayers = 2;
+let numPlayers = 1; // starts from 0
 let playerTaged;
 let platformImg = [];
 let platformColor;
@@ -20,32 +19,34 @@ let player1Imgs = [[], [], []]; // idel, jump, run
 let player2Imgs = [[], [], []];
 let player3Imgs = [[], [], []];
 let player4Imgs = [[], [], []];
+let playerImgs = [[], [], [], []]; // player 1, 2,3,4
 let numJumpImgs = 16;
 let numIdelImgs = 4;
 let numRunImgs = 16;
-
+let numMap = 1;
 function preload(){
   // called BEFORE SETUP. Won't conclude.
   // Until all loads are complete.
   // for(let i = 1; i <= numPlayers; i++){
   //   playersImgs.push(loadImage("assets/Map-0/player"+ i + ".png"));
   // }
-  map = loadImage("assets/Map-" + map +"/map.jpg");
-  platformImg = loadImage("assets/Map-" + map +"/platforms.jpg");
+  map = loadImage("assets/Map-" + numMap +"/map.jpg");
+  platformImg = loadImage("assets/Map-" + numMap +"/platforms.jpg");
   
-  // player 1 (Darth Vader)
-  for(let n = 1; n <= numPlayers; n++){
+  // player imgs
+  for(let n = 0; n <= numPlayers; n++){ //loop thrue players
+    playerImgs.push([]); // player array
+    playerImgs[n].push([],[],[]); // individula aryas for animation sets
     for(let r = 1; r <= numJumpImgs; r++){
-        player1Imgs[1].push(loadImage("assets/Map-" + map +"/Player (" + n + ")/jump/jump ("+ r +").png"));
+      playerImgs[n][1].push(loadImage("assets/Map-" + numMap +"/Player (" + n + ")/jump/jump ("+ r +").png"));
+    }
+    for(let l = 1; l <= numRunImgs; l++){
+      playerImgs[n][2].push(loadImage("assets/Map-" + numMap +"/Player (" + n + ")/run/run ("+ l +").png"));
+    }
+    for(let i = 1; i <= numIdelImgs; i++){
+      playerImgs[n][0].push(loadImage("assets/Map-" + numMap +"/Player (" + n + ")/idle/idle ("+ i +").png"));
     }
   }
-  
-  // for(let r = 1; r <= numIdelImgs; r++){
-  //   player1Imgs[0].push(loadImage("assets/Map-1/Darth Vader/idle/idle ("+ r + ").png"));
-  // }
-  // for(let r = 1; r <= numRunImgs; r++){
-  //   player1Imgs[2].push(loadImage("assets/Map-1/Darth Vader/run/run ("+ r + ").png"));
-  // }
 }
 
 function setup() {
@@ -145,10 +146,6 @@ function tag(){
   }
 }
 
-function playerColisions(){
-  // To handle any player collisions
-}
-
 
 class Player{
   constructor(x,y,mood, playerNumber, color, isTaged){
@@ -166,6 +163,9 @@ class Player{
     this.baseSpeed = 8;
     this.boost = 1;
     this.gameOver = 1; // 1 → means game is not over, 0 → game is over 
+    this.playerAction = 0; // 0 → Idle; 1 → Jumping; 2 → Runing
+    this.playerActionSide = 0; // 0 → left; 1 → right; The player is runing left or right
+    this.frame = 0; // the frame of the action the player is on so if the player is on runing and it is still on run action then change the frame by one to cycale the animation
   }
 
   movement(){
@@ -184,15 +184,26 @@ class Player{
           else{
             this.vel.x = -this.baseSpeed;
           }
-          
-          print(this.pos.x);
 
           if(this.pos.x < 0 - this.playerSize/3) {
             // Stops player from going off screen uses the player size to alow for the player
             // to hit the edge
             this.pos.x = 0 - this.playerSize/3;
             this.vel.x = 0;
-            
+          }
+
+          // player animation for left run
+          if(this.playerAction === 2 && this.playerActionSide === 0){
+            // player is moving left and runing
+            if(this.frame = 16){
+              this.frame = 0; // rest frame to loop thrue the imgs
+            }
+            else this.frame++; // othervise go to the next frame
+          }
+          else {
+            this.frame = 0; // start at the first frame
+            this.playerAction = 2; // set player to runing
+            this.playerActionSide = 0; // the player is moving left
           }
         }
 
@@ -374,6 +385,9 @@ class Player{
       fill(0);
       rect(this.pos.x + (this.playerSize/2 - 10), this.pos.y - 10, this.playerSize/8);
     }
+
+
+    // 
   }
 
   platformCollision() {
