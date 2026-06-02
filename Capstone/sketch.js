@@ -24,6 +24,8 @@ let numJumpImgs = 16;
 let numIdelImgs = 4;
 let numRunImgs = 16;
 let numMap = 1;
+
+let playerMovementKeys = [[LEFT_ARROW, RIGHT_ARROW, UP_ARROW, DOWN_ARROW], [65, 68, 87, 83], [74, 76, 73, 75], [70, 72, 84, 71]]; // player 1, 2, 3, 4
 function preload(){
   // called BEFORE SETUP. Won't conclude.
   // Until all loads are complete.
@@ -175,6 +177,11 @@ class Player{
       // cant move if game is over
       this.vel.add(this.grav);
       this.pos.add(this.vel);
+
+      if(keyIsDown(LEFT_ARROW)){
+        
+      }
+
   
       if(this.playerNumber === 0){
         if(keyIsDown(LEFT_ARROW)){
@@ -192,19 +199,19 @@ class Player{
             this.vel.x = 0;
           }
 
-          // player animation for left run
-          if(this.playerAction === 2 && this.playerActionSide === 0){
-            // player is moving left and runing
-            if(this.frame = 16){
-              this.frame = 0; // rest frame to loop thrue the imgs
-            }
-            else this.frame++; // othervise go to the next frame
-          }
-          else {
-            this.frame = 0; // start at the first frame
-            this.playerAction = 2; // set player to runing
-            this.playerActionSide = 0; // the player is moving left
-          }
+          // // player animation for left run
+          // if(this.playerAction === 2 && this.playerActionSide === 0){
+          //   // player is moving left and runing
+          //   if(this.frame = 16){
+          //     this.frame = 0; // rest frame to loop thrue the imgs
+          //   }
+          //   else this.frame++; // othervise go to the next frame
+          // }
+          // else {
+          //   this.frame = 0; // start at the first frame
+          //   this.playerAction = 2; // set player to runing
+          //   this.playerActionSide = 0; // the player is moving left
+          // }
         }
 
         if(keyIsDown(RIGHT_ARROW)){
@@ -378,8 +385,8 @@ class Player{
   show(){
     // this function will display the character
     
-    image(playersImgs[this.playerNumber], this.pos.x, this.pos.y);
-    playersImgs[this.playerNumber].resize(this.playerSize, this.playerSize);
+    //image(playersImgs[this.playerNumber], this.pos.x, this.pos.y);
+    //playersImgs[this.playerNumber].resize(this.playerSize, this.playerSize);
     if(this.isTaged){
       //if taged show the triangle above
       fill(0);
