@@ -2,7 +2,7 @@
 // Muhammad & Ayeman
 // May 4/26
 
-// Globale
+// Muhammad Ismail Global Variable
 let players = [];
 let map;
 let tagTime = 60; //Time befor a tag acurs in frames
@@ -13,6 +13,14 @@ let platformImg = [];
 let platformColor;
 let platform = [];
 let t; //time in seconds
+
+// Ayeman Islam Global Variable
+let menu = [];
+let pauseMenu = [];
+let endGameMenu = [];
+let gameState = "menu"; let gameState1 = "pause-menu"; let gameState2 = "endgame";
+
+
 
 // player imgs 2d arays for animation
 let playerImgs = [[], [], [], []]; // player 1, 2,3,4 ; In each of those idel, jump, run
@@ -44,6 +52,17 @@ function preload() {
       playerImgs[n][0].push(loadImage("assets/Map-" + numMap + "/Player (" + n + ")/idle/idle (" + i + ").png"));
     }
   }
+
+  // Ayeman's Gamestate setup
+  let play = loadImage();
+  let settings = loadImage();
+  let pause = loadImage();
+  let end = loadImage();  
+
+  menu.push(play, settings);
+  
+
+
 }
 
 function setup() {
@@ -61,6 +80,7 @@ function setup() {
   platform = detectPlatforms(platformColor, platformImg);
   playerMovementKeys.push([LEFT_ARROW, RIGHT_ARROW, UP_ARROW, DOWN_ARROW], [65, 68, 87, 83], [74, 76, 73, 75], [70, 72, 84, 71]);
   frameRate(60);
+ 
 }
 
 function draw() {
@@ -82,14 +102,19 @@ function draw() {
 
 function startMenu() {
   // For the start menu
+  // a page to the controls a option to chous witch charcter player 1 ,2 .. whant to be and how many players, buffs
+  // no buffs. Timer options to chous what time you whoud like 60 s or 120.
 }
 
 function pauseMenu() {
   // For the pause menu
+  // alowes user to hit a button like p to open the pause menue, 
+  // stops all movemnt and then you can change either resume end or restart, see the player movement keys
 }
 
 function endScreen() {
   // The end screen for who won
+  // overlays who lost on a side and who one on a podioum
   for (let p in players) {
     players[p].gameEnd();
   }
