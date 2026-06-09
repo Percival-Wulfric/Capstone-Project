@@ -20,6 +20,10 @@ let pauseMenu = [];
 let endGameMenu = [];
 let gameState = "menu"; let gameState1 = "pause-menu"; let gameState2 = "endgame";
 
+let playButton;
+let settingsButton;
+
+
 
 
 // player imgs 2d arays for animation
@@ -56,12 +60,25 @@ function preload() {
   // Ayeman's Gamestate setup
   let play = loadImage();
   let settings = loadImage();
-  let pause = loadImage();
+  let pause = loadImage(); 
+  let continueGame =  loadImage();
   let end = loadImage();  
 
   menu.push(play, settings);
-  
+  pauseMenu.push(continueGame, settings, end);
+  endGameMenu.push(end);
+}
 
+function menu(){
+  background(250);
+  playButton = createButton('Play');
+  playButton.position(400, 400);
+
+  settingsButton = createButton('settings');
+  settingsButton.position(400, 450);
+
+  image(menu[0], 400, 400);
+  image(menu[1], 400, 450);
 
 }
 
@@ -81,6 +98,8 @@ function setup() {
   playerMovementKeys.push([LEFT_ARROW, RIGHT_ARROW, UP_ARROW, DOWN_ARROW], [65, 68, 87, 83], [74, 76, 73, 75], [70, 72, 84, 71]);
   frameRate(60);
  
+
+
 }
 
 function draw() {
