@@ -18,10 +18,13 @@ let t; //time in seconds
 let menu = [];
 let pauseMenu = [];
 let endGameMenu = [];
-let gameState = "menu"; let gameState1 = "pause-menu"; let gameState2 = "endgame";
+let gameState = [1,2,3];
+
+let play, settings, continueGame, end;
 
 let playButton;
 let settingsButton;
+
 
 
 
@@ -58,28 +61,14 @@ function preload() {
   }
 
   // Ayeman's Gamestate setup
-  let play = loadImage();
-  let settings = loadImage();
-  let pause = loadImage(); 
-  let continueGame =  loadImage();
-  let end = loadImage();  
+  play = loadImage("assets/menu1/Play Button.png");
+  settings = loadImage("assets/menu1/Settings Button.png");
+  continueGame =  loadImage("assets/menu1/Continue Button.png");
+  end = loadImage("assets/menu1/Quit Button.png");  
 
   menu.push(play, settings);
   pauseMenu.push(continueGame, settings, end);
   endGameMenu.push(end);
-}
-
-function menu(){
-  background(250);
-  playButton = createButton('Play');
-  playButton.position(400, 400);
-
-  settingsButton = createButton('settings');
-  settingsButton.position(400, 450);
-
-  image(menu[0], 400, 400);
-  image(menu[1], 400, 450);
-
 }
 
 function setup() {
@@ -123,12 +112,32 @@ function startMenu() {
   // For the start menu
   // a page to the controls a option to chous witch charcter player 1 ,2 .. whant to be and how many players, buffs
   // no buffs. Timer options to chous what time you whoud like 60 s or 120.
+  background(250);
+  
+  playButton = createButton('Play');
+  playButton.position(400, 400);
+
+  settingsButton = createButton('settings');
+  settingsButton.position(400, 450);
+
+  image(menu[0], 400, 400);
+  image(menu[1], 400, 450);
+
 }
 
-function pauseMenu() {
+function pauseGame() {
   // For the pause menu
   // alowes user to hit a button like p to open the pause menue, 
   // stops all movemnt and then you can change either resume end or restart, see the player movement keys
+
+  background(250);
+  continueButton = createButton('Continue');
+  continueButton.position(400, 400);
+
+  settingsButton.position(400, 450);
+
+  image(pauseMenu[0], 400, 400);
+  image(pauseMenu[1], 400, 450);
 }
 
 function endScreen() {
@@ -163,6 +172,8 @@ function timer() {
 
 function powerUps() {
   // This function handles overups
+
+  
 }
 
 function tag() {
@@ -322,7 +333,7 @@ class Player {
           this.frame = 0; // start at the first frame
           this.playerAction = 0; // set player to jump
         }
-        if(this.playerNumber === 0) print("try this:",this.playerAction,this.frame);
+        //if(this.playerNumber === 0) print("try this:",this.playerAction,this.frame);
       }
       this.isJumping = keyIsDown(UP_ARROW);
       
@@ -333,8 +344,9 @@ class Player {
   show() {
     // this function will display the character
     //if(this.playerNumber === 0) print("try this:",this.playerAction,this.frame);
-
-    image(playerImgs[this.playerNumber][this.playerAction][this.frame], this.pos.x, this.pos.y); // go to the player imgs then in that go to the charcter 
+    let img = playerImgs[this.playerNumber][this.playerAction][this.frame];
+    img.resize(75, this.playerSize);
+    image(img, this.pos.x, this.pos.y); // go to the player imgs then in that go to the charcter 
     // and in that go to the img set of the current action then do the img on which fram of animation we shoud be one 
 
     if (this.isTaged) {
