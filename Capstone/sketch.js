@@ -18,15 +18,11 @@ let t; //time in seconds
 let menu = [];
 let pauseMenu = [];
 let endGameMenu = [];
-let gameState = [1,2,3];
+let gameState = 0;// 0 = start, 1 = game is started, 2 = pause menu, 3 = end/over
 
 let play, settings, continueGame, end;
 
-let playButton;
-let settingsButton;
-
-
-
+let playButton, settingsButton, continueButton, endButton;
 
 
 // player imgs 2d arays for animation
@@ -63,17 +59,18 @@ function preload() {
   // Ayeman's Gamestate setup
   play = loadImage("assets/menu1/Play Button.png");
   settings = loadImage("assets/menu1/Settings Button.png");
-  continueGame =  loadImage("assets/menu1/Continue Button.png");
-  end = loadImage("assets/menu1/Quit Button.png");  
+  continueGame = loadImage("assets/menu1/Continue Button.png");
+  end = loadImage("assets/menu1/Quit Button.png");
 
   menu.push(play, settings);
   pauseMenu.push(continueGame, settings, end);
   endGameMenu.push(end);
+
 }
 
 function setup() {
   createCanvas(1912, 1076);
-  pixelDensity(1);
+  pixelDensity(1); frameRate(60);
   noStroke();
   for (let i = 0; i <= numPlayers; i++) {
     players.push(new Player(width / 2, height / 2, i, [255, 0, 0], 0));
@@ -85,43 +82,126 @@ function setup() {
 
   platform = detectPlatforms(platformColor, platformImg);
   playerMovementKeys.push([LEFT_ARROW, RIGHT_ARROW, UP_ARROW, DOWN_ARROW], [65, 68, 87, 83], [74, 76, 73, 75], [70, 72, 84, 71]);
-  frameRate(60);
- 
 
 
+
+  // Ayeman's Button Setup
+  playButton = createButton('Play');
+  playButton.size(150, 50);
+  playButton.style('font-size', '30px');
+
+  settingsButton = createButton('Settings');
+  settingsButton.size(150, 50);
+  settingsButton.style('font-size', '30px');
+
+  continueButton = createButton('Continue');
+  continueButton.size(150, 50);
+  continueButton.style('font-size', '30px');
+
+  endButton = createButton('End');
+  endButton.size(150, 50);
+  endButton.style('font-size', '30px');
 }
 
 function draw() {
   timer();
   background(220);
+  startMenu();
+
+  if (keyPressed === 80) gameState = 2;
+  if (gameState === 0) {
+    startMenu();
+  }
+  if (gameState === 1) {
+    gameStarted();
+    if (time) tag();
+    if (!(time % 60)) {
+      t = time / 60
+      if (t < 0) t = 0;
+    }
+    text(t, width / 2, 100);
+  }
+  if (gameState === 2) {
+    pauseGame();
+  }
+  // else {
+  //   endGameMenu();
+  // }
+
+  hideOrShowButtons();
+}
+function hideOrShowButtons() {
+  playButton.hide();
+  settingsButton.hide();
+  continueButton.hide();
+  endButton.hide();
+
+  if (gameState === 0) {
+    playButton.show();
+    playButton.position(width / 2, height / 2 - 50);
+    settingsButton.show();
+    settingsButton.position(width / 2, height / 2);
+    startMenu();
+  }
+  if (gameState === 1) {
+    playButton.hide();
+    settingsButton.hide();
+    continueButton.hide();
+    endButton.hide();
+  }
+  if (gameState === 2) {
+    settingsButton.show();
+    settingsButton.position(width / 2, height / 2);
+    continueButton.show();
+    continueButton.position(width / 2, height / 2 - 50);
+    endButton.show();
+    endButton.position(width / 2, height / 2 + 50);
+    pauseGame()
+  }
+  if (gameState === 3) {
+    settingsButton.show();
+    settingsButton.position(width / 2, height / 2);
+    endButton.show()
+    endButton.position(width / 2, height / 2 + 50);
+  }
+}
+
+function gameStarted() {
+  // this function will run all things that the game tag needs so like player timer and what not
+  textSize(50); fill(0);
+
   image(map, 0, 0);
   for (let p in players) {
     players[p].action();
   }
-
-  if (time) tag();
-  if (!(time % 60)) {
-    t = time / 60
-    if (t < 0) t = 0;
-  }
-  textSize(50); fill(0);
-  text(t, width / 2, 100);
 }
 
 function startMenu() {
   // For the start menu
   // a page to the controls a option to chous witch charcter player 1 ,2 .. whant to be and how many players, buffs
   // no buffs. Timer options to chous what time you whoud like 60 s or 120.
+
   background(250);
-  
-  playButton = createButton('Play');
-  playButton.position(400, 400);
 
-  settingsButton = createButton('settings');
-  settingsButton.position(400, 450);
+  // image(menu[0], 400, 400);
+  // image(menu[1], 400, 450); 
 
-  image(menu[0], 400, 400);
-  image(menu[1], 400, 450);
+  playButton.mousePressed(gameStarted);
+
+  // if(gameState === 0){
+  //   playButton.hide();
+  //   settingsButton.hide();
+  //   continueButton.hide();
+  //   endButton.hide();
+  // }
+  // else if(gameState === 2 || gameState === 3){
+  //   playButton.hide();
+  //   settingsButton.show();
+  // }
+  // else{
+  //   playButton.show();
+  //   settingsButton.show();
+  // }
 
 }
 
@@ -130,14 +210,24 @@ function pauseGame() {
   // alowes user to hit a button like p to open the pause menue, 
   // stops all movemnt and then you can change either resume end or restart, see the player movement keys
 
-  background(250);
-  continueButton = createButton('Continue');
-  continueButton.position(400, 400);
+  // background(25);
+  // if(gameState === 0){
+  //   playButton.hide();
+  //   settingsButton.hide();
+  // }
+  // else if(gameState === 2 || gameState === 3){
+  //   playButton.hide();
+  // }
+  // else{
+  //   playButton.hide();
+  //   settingsButton.hide();
+  // }
+  endButton.mousePressed(startMenu);
 
-  settingsButton.position(400, 450);
+  // image(pauseMenu[0], 400, 400);
+  // image(pauseMenu[1], 400, 450);
+  // image(pauseMenu[2], 400, 500);
 
-  image(pauseMenu[0], 400, 400);
-  image(pauseMenu[1], 400, 450);
 }
 
 function endScreen() {
@@ -145,12 +235,15 @@ function endScreen() {
   // overlays who lost on a side and who one on a podioum
   for (let p in players) {
     players[p].gameEnd();
+
   }
+  gameState = 4; // game is over
+  endButton.position(400, 400);
 }
 
 function timer() {
   // This function is responsable for all time related code
-  frameCount ++; // incrasing frame count for drawings
+  frameCount++; // incrasing frame count for drawings
   tagTime--; //for taging 
   time--; // game time
   if (tagTime < 0) tagTime = 0; // reset tag time to reuse
@@ -173,7 +266,7 @@ function timer() {
 function powerUps() {
   // This function handles overups
 
-  
+
 }
 
 function tag() {
@@ -244,7 +337,7 @@ class Player {
         }
 
         // player animation for left run
-        if (this.playerAction === 2 && this.playerActionSide === 0 && frameCount%this.frameRate === 0) {
+        if (this.playerAction === 2 && this.playerActionSide === 0 && frameCount % this.frameRate === 0) {
           // player is moving left and runing
           if (this.frame === 15) {
             this.frame = 0; // rest frame to loop thrue the imgs
@@ -270,11 +363,11 @@ class Player {
         if (this.pos.x > width - (this.playerSize / 3) * 2) {
           // Stops player from going off screen uses the player size to alow for the player
           // to hit the edge
-          this.pos.x = width -this.playerSize / 3 * 2;
+          this.pos.x = width - this.playerSize / 3 * 2;
           this.vel.x = 0;
         }
 
-        if (this.playerAction === 2 && this.playerActionSide === 1 && frameCount%this.frameRate === 0) {
+        if (this.playerAction === 2 && this.playerActionSide === 1 && frameCount % this.frameRate === 0) {
           // player is moving right and runing
           if (this.frame === 15) {
             this.frame = 0; // rest frame to loop thrue the imgs
@@ -300,7 +393,7 @@ class Player {
           this.vel.y = -this.jumpHeight;
           this.numJumps -= 1;
 
-          if (this.playerAction === 1 && frameCount%this.frameRate === 0) {
+          if (this.playerAction === 1 && frameCount % this.frameRate === 0) {
             // player is jumping
             if (this.frame === 15) {
               this.frame = 0; // rest frame to loop thrue the imgs
@@ -320,7 +413,7 @@ class Player {
         // Stop movemnet if the player is not hiting any keys
         this.vel.x = 0;
 
-        if (this.playerAction === 0 && frameCount%this.frameRate === 0) {
+        if (this.playerAction === 0 && frameCount % this.frameRate === 0) {
           // player is idle
           if (this.frame === 3) {
             this.frame = 0; // rest frame to loop thrue the imgs
@@ -336,7 +429,7 @@ class Player {
         //if(this.playerNumber === 0) print("try this:",this.playerAction,this.frame);
       }
       this.isJumping = keyIsDown(UP_ARROW);
-      
+
     }
 
   }
