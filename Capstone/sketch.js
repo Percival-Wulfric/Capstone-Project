@@ -6,7 +6,7 @@
 let players = [];
 let map;
 let tagTime = 60; //Time befor a tag acurs in frames
-let time = 100 * 1; // The amount of time in frames that the game is played
+let time = 60 * 10; // The amount of time in frames that the game is played
 let numPlayers = 1; // starts from 0
 let playerTaged;
 let platformImg = [];
@@ -19,7 +19,7 @@ let gameState = 0;// 0 = start, 1 = game is started, 2 = pause menu, 3 = end/ove
 
 let play, settings, continueGame, end;
 
-let playButton, settingsButton, continueButton, endButton;
+let playButton, settingsButton, backButton, continueButton, endButton;
 let time60, time90, time120, time180; // Buttons for each time limit for tagging
 
 
@@ -94,6 +94,11 @@ function setup() {
   endButton.style('font-size', '30px');
   endButton.mousePressed(clickEnd); // Link to our new function
 
+  backButton = createButton('← BACK');
+  backButton.size(150, 50);
+  backButton.style('font-size', '30px');
+  backButton.mousePressed(backToMenu);
+
 
 
   // Ayeman's Time Selection Buttons
@@ -152,6 +157,10 @@ function draw() {
   hideOrShowButtons();
 }
 
+function backToMenu(){
+  gameState = 0;
+}
+
 function selectTime() { // Ayeman's code
   // 'this' refers to the button that was just clicked
   time = this.timeValue * 60;
@@ -191,6 +200,7 @@ function hideOrShowButtons() { // Ayeman's code
 
     continueButton.hide();
     endButton.hide();
+    backButton.hide();
     hideTimeButtons(); // Helper to hide time buttons
   }
   // 2. Playing Game
@@ -199,6 +209,7 @@ function hideOrShowButtons() { // Ayeman's code
     settingsButton.hide();
     continueButton.hide();
     endButton.hide();
+    backButton.hide();
     hideTimeButtons();
   }
   // 3. Pause Menu
@@ -217,7 +228,7 @@ function hideOrShowButtons() { // Ayeman's code
     settingsButton.hide();
     continueButton.hide();
     endButton.show();
-    endButton.position(width / 2 - 75, height / 2 + 50);
+    endButton.position(width / 2 - 75, height / 2 + 250);
     hideTimeButtons();
   }
   // 5. Settings Menu
@@ -228,7 +239,8 @@ function hideOrShowButtons() { // Ayeman's code
     endButton.hide();
 
     // Show time buttons
-    time60.show();  time60.position(width / 2 - 500, height / 2 - 130);
+    backButton.show(); backButton.position(width / 2 + 720, height / 2 + 450);
+    time60.show();  time60.position(width / 2 - 500, height / 2 - 135);
     time90.show();  time90.position(width / 2 - 200, height / 2 - 130);
     time120.show(); time120.position(width / 2 + 110, height / 2 - 130);
     time180.show(); time180.position(width / 2 + 410, height / 2 - 130);
@@ -258,8 +270,8 @@ function startMenu() { // Ayeman's code
   fill(255);
   textFont('Helevetica');
   textSize(180);
-  textStyle(BOLD, ITALIC);
-  text("TAG GAME", width / 2, height / 2 - 150);
+  textStyle(ITALIC, BOLD);
+  text("RUN 🏃‍♂️ IT", width / 2, height / 2 - 150);
 
 }
 
@@ -306,7 +318,6 @@ function openSettings() {
     text("PLAYER " + (n + 1), xPos + 50, yPos + 180);
   }
 }
-  
 
   //Controls Display
   fill(205,255,255);
@@ -337,25 +348,25 @@ function endScreen() {
   // The end screen for who won
   // overlays who lost on a side and who one on a podioum
   
-  fill(50, 100, 150, 55);
+  fill(50, 100, 150, 65);
   rect(0, 0, width, height); // creating background
   textAlign(CENTER, CENTER);
   fill(255);
-  textSize(80);
-  text("GAME OVER", width / 2, height / 2 - 150); // title screen
+  textSize(150);
+  text("GAME OVER", width / 2, height / 2 - 250); // title screen
 
   for (let i = 0; i < players.length; i++) {
     if (players[i].isTaged === 1) {
       
       // Display the loser in the center
-      if (playerImgs[i] && playerImgs[i][0] && playerImgs[i][0][0]) {
-        let loserImg = playerImgs[i][0][0];
-        image(loserImg, width / 2 - 75, height / 2 - 100, 150, 225);
-      }
+      let loserImg = playerImgs[i][0][0];
+      image(loserImg, width / 2 - 75, height / 2 - 90, 150, 225);
+      
 
       // Display the loser's name
-      textSize(50);
+      textSize(35);
       fill(255, 50, 50);
+      textFont('Arial')
       text("PLAYER " + (i + 1) + " LOST!", width / 2, height / 2 + 150);
       
       // Stop the game loop for everyone
