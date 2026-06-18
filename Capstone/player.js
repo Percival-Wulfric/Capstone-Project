@@ -1,3 +1,6 @@
+// This is the player class by Muhammad Ismail
+// I seprated it out as it is quit a larg bit of code
+
 class Player {
   constructor(x, y, playerNumber, color, isTaged) {
     this.pos = createVector(x, y); //player position on screen
