@@ -1,7 +1,9 @@
 // Ayeman
 // This is all the buttons code and menues as well since they are corelated
 
+let musicOnImg, musicOffImg;
 let showMusicTimer = 0; // How many frames to keep the music icons visible 
+
 
 function buttonSetup() {
   // Ayeman's Button Setup
@@ -30,16 +32,6 @@ function buttonSetup() {
   backButton.size(150, 50);
   backButton.style('font-size', '30px');
   backButton.mousePressed(backToMenu);
-
-  musicButtonOn = createButton('🎵 ON');
-  musicButtonOn.size(150, 50);
-  musicButtonOn.style('font-size', '30px');
-
-
-  musicButtonOff = createButton('🎵 OFF');
-  musicButtonOff.size(150, 50);
-  musicButtonOff.style('font-size', '30px');
-
 
   // Ayeman's Time Selection Buttons
   time60 = createButton('60s');
@@ -71,23 +63,24 @@ function triggerMusicButton() {
   showMusicTimer = 120; // Show for 120 frames 
 }
 
-function musicButtonHideShow() {
+function musicHideShow() {
   // This function allows to show the music icons to
   // indicate if the music on or off for a brief moment
-  musicButtonOn.hide();
-  musicButtonOff.hide();
 
-  if (gameState === 1) {
-    if (musicOn = false) {
-      musicButtonOn.hide();
-      musicButtonOff.show();
+  if (showMusicTimer > 0) {
+    // Choose the image based on the current music state
+    let imageToDisplay;
+
+    if (musicOn === true) {
+      imageToDisplay = musicOnImg;
+    } else {
+      imageToDisplay = musicOffImg;
     }
-    else if (musicOn = true) {
-      musicButtonOn.show();
-      musicButtonOff.hide();
-    }
+    // Draw the chosen image at the specified coordinates
+    image(imageToDisplay, 50, 50, 100, 100);
+    // Decrease the timer by one frame
+    showMusicTimer = showMusicTimer - 1;
   }
-  
 }
 
 function backToMenu() {
@@ -126,7 +119,7 @@ function hideTimeButtons() { // Ayeman's code
 function hideOrShowButtons() { // Ayeman's code
   // 1. Start Menu
   if (gameState === 0) {
-    musicButtonHideShow();
+    musicHideShow();
     playButton.show();
     playButton.position(width / 2 - 75, height / 2 + 50);
     settingsButton.show();
@@ -139,18 +132,18 @@ function hideOrShowButtons() { // Ayeman's code
   }
   // 2. Playing Game
   else if (gameState === 1) {
-    musicButtonHideShow();
+    musicHideShow();
     playButton.hide();
     settingsButton.hide();
     continueButton.hide();
     endButton.hide();
     backButton.hide();
     hideTimeButtons();
-    
+
   }
   // 3. Pause Menu
   else if (gameState === 2) {
-    musicButtonHideShow();
+    musicHideShow();
     playButton.hide();
     settingsButton.hide();
     continueButton.show();
@@ -161,7 +154,7 @@ function hideOrShowButtons() { // Ayeman's code
   }
   // 4. End Screen
   else if (gameState === 3) {
-    musicButtonHideShow();
+    musicHideShow();
     playButton.hide();
     settingsButton.hide();
     continueButton.hide();
@@ -171,7 +164,7 @@ function hideOrShowButtons() { // Ayeman's code
   }
   // 5. Settings Menu
   else if (gameState === 4) {
-    musicButtonHideShow();
+    musicHideShow();
     playButton.hide();
     settingsButton.hide();
     continueButton.hide();
@@ -274,7 +267,7 @@ function pauseGame() {
   // alowes user to hit a button like p to open the pause menue, 
   // stops all movemnt and then you can change either resume end or restart, see the player movement keys
 
-  fill(200, 0, 150, 10);
+  fill(200, 50, 150, 10);
   rect(0, 0, width, height); // creating background
 
   textAlign(CENTER, CENTER);
@@ -288,7 +281,7 @@ function endScreen() {
   // The end screen for who won
   // overlays who lost on a side and who one on a podioum
 
-  fill(50, 100, 150, 65);
+  fill(150, 100, 150, 65);
   rect(0, 0, width, height); // creating background
   textAlign(CENTER, CENTER);
   fill(255);

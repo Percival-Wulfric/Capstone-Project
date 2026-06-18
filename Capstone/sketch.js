@@ -42,6 +42,10 @@ function preload() {
   map = loadImage("assets/Map-" + numMap + "/map.jpg");
   platformImg = loadImage("assets/Map-" + numMap + "/platforms.jpg");
 
+  // loading music on and music off icons - Ayeman
+  musicOnImg = loadImage("assets/music-icons/MusicOn.png");
+  musicOffImg = loadImage("assets/music-icons/MusicOff.png");
+
   // player imgs
   for (let n = 0; n <= numPlayers; n++) { //loop thrue players
     playerImgs.push([]); // player array
@@ -77,8 +81,6 @@ function setup() {
 }
 
 function draw() {
-  
-  
   // Drawing the screen based on the gameState
   if (gameState === 0) {
     startMenu();
@@ -98,11 +100,11 @@ function draw() {
   else if (gameState === 2) pauseGame();
   else if (gameState === 3) endScreen();
 
-
+  // Ensures if the music icons shows up if on or off
+  musicHideShow();
   // Checks buttons every frame 
   hideOrShowButtons();
 }
-
 function keyPressed(){
   // Pause game logic (80 is the keycode for 'P' refering to pause) 
   if (keyIsDown(80)) {
@@ -114,10 +116,10 @@ function keyPressed(){
       gameState = 1; //continues game
     }
   }
-
   if (keyIsDown(77)){ // if press M then pause and play music
     if(musicOn) musicOn = false;
     else musicOn = true;
+    triggerMusicButton();
   }
 }
 
