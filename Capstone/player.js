@@ -258,17 +258,4 @@ class Player {
     
     this.platformCollision();
   }
-
-  gameEnd() {
-    //Game ended state
-    if (this.gameOver) {
-      if (this.isTaged) {
-        print("NO I LOST")
-      }
-      else {
-        print("HAHAH I WON, GG")
-      }
-      this.gameOver = 0;
-    }
-  }
 } 

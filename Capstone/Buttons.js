@@ -1,66 +1,96 @@
 // Ayeman
 // This is all the buttons code and menues as well since they are corelated
 
+let showMusicTimer = 0; // How many frames to keep the music icons visible 
+
+function buttonSetup() {
+  // Ayeman's Button Setup
+  playButton = createButton('Play');
+  playButton.size(150, 50);
+  playButton.style('font-size', '30px');
+  playButton.mousePressed(clickPlay); // Link to our new function
+
+  settingsButton = createButton('Settings');
+  settingsButton.size(150, 50);
+  settingsButton.style('font-size', '30px');
+  settingsButton.mousePressed(openSettings);
 
 
-function buttonSetup(){
-    // Ayeman's Button Setup
-    playButton = createButton('Play');
-    playButton.size(150, 50);
-    playButton.style('font-size', '30px');
-    playButton.mousePressed(clickPlay); // Link to our new function
+  continueButton = createButton('Continue');
+  continueButton.size(150, 50);
+  continueButton.style('font-size', '30px');
+  continueButton.mousePressed(clickContinue); // Link to our new function
 
-    settingsButton = createButton('Settings');
-    settingsButton.size(150, 50);
-    settingsButton.style('font-size', '30px');
-    settingsButton.mousePressed(openSettings);
+  endButton = createButton('End');
+  endButton.size(150, 50);
+  endButton.style('font-size', '30px');
+  endButton.mousePressed(clickEnd); // Link to our new function
 
+  backButton = createButton('← BACK');
+  backButton.size(150, 50);
+  backButton.style('font-size', '30px');
+  backButton.mousePressed(backToMenu);
 
-    continueButton = createButton('Continue');
-    continueButton.size(150, 50);
-    continueButton.style('font-size', '30px');
-    continueButton.mousePressed(clickContinue); // Link to our new function
-
-    endButton = createButton('End');
-    endButton.size(150, 50);
-    endButton.style('font-size', '30px');
-    endButton.mousePressed(clickEnd); // Link to our new function
-
-    backButton = createButton('← BACK');
-    backButton.size(150, 50);
-    backButton.style('font-size', '30px');
-    backButton.mousePressed(backToMenu);
+  musicButtonOn = createButton('🎵 ON');
+  musicButtonOn.size(150, 50);
+  musicButtonOn.style('font-size', '30px');
 
 
+  musicButtonOff = createButton('🎵 OFF');
+  musicButtonOff.size(150, 50);
+  musicButtonOff.style('font-size', '30px');
 
-    // Ayeman's Time Selection Buttons
-    time60 = createButton('60s');
-    time60.mousePressed(selectTime);
-    time60.size(150, 50);
-    time60.style('font-size', '30px');
-    time60.timeValue = 60;
 
-    time90 = createButton('90s');
-    time90.mousePressed(selectTime);
-    time90.size(150, 50);
-    time90.style('font-size', '30px');
-    time90.timeValue = 90;
+  // Ayeman's Time Selection Buttons
+  time60 = createButton('60s');
+  time60.mousePressed(selectTime);
+  time60.size(150, 50);
+  time60.style('font-size', '30px');
+  time60.timeValue = 60;
 
-    time120 = createButton('120s');
-    time120.mousePressed(selectTime);
-    time120.size(150, 50);
-    time120.style('font-size', '30px');
-    time120.timeValue = 120;
+  time90 = createButton('90s');
+  time90.mousePressed(selectTime);
+  time90.size(150, 50);
+  time90.style('font-size', '30px');
+  time90.timeValue = 90;
 
-    time180 = createButton('180s');
-    time180.mousePressed(selectTime);
-    time180.size(150, 50);
-    time180.style('font-size', '30px');
-    time180.timeValue = 180;
+  time120 = createButton('120s');
+  time120.mousePressed(selectTime);
+  time120.size(150, 50);
+  time120.style('font-size', '30px');
+  time120.timeValue = 120;
+
+  time180 = createButton('180s');
+  time180.mousePressed(selectTime);
+  time180.size(150, 50);
+  time180.style('font-size', '30px');
+  time180.timeValue = 180;
 }
 
+function triggerMusicButton() {
+  showMusicTimer = 120; // Show for 120 frames 
+}
 
-function backToMenu(){
+function musicButtonHideShow() {
+  // This function allows to show the music icons to
+  // indicate if the music on or off for a brief moment
+  musicButtonOn.hide();
+  musicButtonOff.hide();
+
+  if (gameState === 1) {
+    if (musicOn = false) {
+      musicButtonOn.hide();
+      musicButtonOff.show();
+    }
+    else if (musicOn = true) {
+      musicButtonOn.show();
+      musicButtonOff.hide();
+    }
+  }
+  
+}
+
+function backToMenu() {
   gameState = 0;
 }
 
@@ -96,6 +126,7 @@ function hideTimeButtons() { // Ayeman's code
 function hideOrShowButtons() { // Ayeman's code
   // 1. Start Menu
   if (gameState === 0) {
+    musicButtonHideShow();
     playButton.show();
     playButton.position(width / 2 - 75, height / 2 + 50);
     settingsButton.show();
@@ -108,15 +139,18 @@ function hideOrShowButtons() { // Ayeman's code
   }
   // 2. Playing Game
   else if (gameState === 1) {
+    musicButtonHideShow();
     playButton.hide();
     settingsButton.hide();
     continueButton.hide();
     endButton.hide();
     backButton.hide();
     hideTimeButtons();
+    
   }
   // 3. Pause Menu
   else if (gameState === 2) {
+    musicButtonHideShow();
     playButton.hide();
     settingsButton.hide();
     continueButton.show();
@@ -127,6 +161,7 @@ function hideOrShowButtons() { // Ayeman's code
   }
   // 4. End Screen
   else if (gameState === 3) {
+    musicButtonHideShow();
     playButton.hide();
     settingsButton.hide();
     continueButton.hide();
@@ -136,15 +171,17 @@ function hideOrShowButtons() { // Ayeman's code
   }
   // 5. Settings Menu
   else if (gameState === 4) {
+    musicButtonHideShow();
     playButton.hide();
     settingsButton.hide();
     continueButton.hide();
     endButton.hide();
 
+
     // Show time buttons
     backButton.show(); backButton.position(width / 2 + 720, height / 2 + 450);
-    time60.show();  time60.position(width / 2 - 500, height / 2 - 135);
-    time90.show();  time90.position(width / 2 - 200, height / 2 - 130);
+    time60.show(); time60.position(width / 2 - 500, height / 2 - 135);
+    time90.show(); time90.position(width / 2 - 200, height / 2 - 130);
     time120.show(); time120.position(width / 2 + 110, height / 2 - 130);
     time180.show(); time180.position(width / 2 + 410, height / 2 - 130);
   }
@@ -166,7 +203,7 @@ function startMenu() { // Ayeman's code
   // a page to the controls a option to chous witch charcter player 1 ,2 .. whant to be and how many players, buffs
   // no buffs. Timer options to chous what time you whoud like 60 s or 120.
 
-  fill(200, 150, 150, 75);
+  fill(200, 150, 150);
   rect(0, 0, width, height); // creating background
 
   textAlign(CENTER, CENTER);
@@ -199,31 +236,31 @@ function openSettings() {
 
   // Player Preview 
   for (let n = 0; n < 4; n++) {
-  if (playerImgs[n] && playerImgs[n][0] && playerImgs[n][0][0]) {
-    let idleImg = playerImgs[n][0][0];
-    
-    // 1. Grid Math
-    let col = n % 2;        // 0, 1, 0, 1 (Switches between left and right)
-    let row = floor(n / 2); // 0, 0, 1, 1 (Stays top row then moves to bottom)
-    
-    // 2. Calculate positions
-    // Adjust these values to shift the whole grid around
-    let startX = width / 2 + 250; 
-    let startY = height / 2 + 45;
-    
-    let xPos = startX + (col * 300); // 300px spacing between columns
-    let yPos = startY + (row * 300); // 300px spacing between rows
-    
-    // 3. Draw image and label
-    image(idleImg, xPos, yPos, 100, 150);
-    textSize(35);
-    textAlign(CENTER, CENTER);
-    text("PLAYER " + (n + 1), xPos + 50, yPos + 180);
+    if (playerImgs[n] && playerImgs[n][0] && playerImgs[n][0][0]) {
+      let idleImg = playerImgs[n][0][0];
+
+      // 1. Grid Math
+      let col = n % 2;        // 0, 1, 0, 1 (Switches between left and right)
+      let row = floor(n / 2); // 0, 0, 1, 1 (Stays top row then moves to bottom)
+
+      // 2. Calculate positions
+      // Adjust these values to shift the whole grid around
+      let startX = width / 2 + 250;
+      let startY = height / 2 + 45;
+
+      let xPos = startX + (col * 300); // 300px spacing between columns
+      let yPos = startY + (row * 300); // 300px spacing between rows
+
+      // 3. Draw image and label
+      image(idleImg, xPos, yPos, 100, 150);
+      textSize(35);
+      textAlign(CENTER, CENTER);
+      text("PLAYER " + (n + 1), xPos + 50, yPos + 180);
+    }
   }
-}
 
   //Controls Display
-  fill(205,255,255);
+  fill(205, 255, 255);
   textAlign(CENTER, CENTER); textSize(35); textFont('Arial');
   text("PLAYER 1: ⬅️/➡️ to Move Left & Right, ⬆️ to Jump", width / 2 - 470, height / 2 + 100);
   text("PLAYER 2: A/D to Move Left & Right, W to Jump", width / 2 - 500, height / 2 + 200);
@@ -244,5 +281,40 @@ function pauseGame() {
   fill(255);
   textSize(80);
   text("PAUSED", width / 2, height / 2 - 150); // title screen
+
+}
+
+function endScreen() {
+  // The end screen for who won
+  // overlays who lost on a side and who one on a podioum
+
+  fill(50, 100, 150, 65);
+  rect(0, 0, width, height); // creating background
+  textAlign(CENTER, CENTER);
+  fill(255);
+  textSize(150);
+  text("GAME OVER", width / 2, height / 2 - 250); // title screen
+
+  for (let i = 0; i < players.length; i++) {
+    if (players[i].isTaged === 1) {
+
+      // Display the loser in the center
+      let loserImg = playerImgs[i][0][0];
+      image(loserImg, width / 2 - 75, height / 2 - 90, 150, 225);
+
+
+      // Display the loser's name
+      textSize(35);
+      fill(255, 50, 50);
+      textFont('Arial')
+      text("PLAYER " + (i + 1) + " LOST!", width / 2, height / 2 + 150);
+
+      // Stop the game loop for everyone
+      players[i].gameOver = 0;
+    }
+  }
+
+  gameState = 3; // game is over
+  endButton.position(400, 400);
 
 }

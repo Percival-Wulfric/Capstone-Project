@@ -7,13 +7,14 @@ let players = [];
 let map;
 let tagTime = 60; //Time befor a tag acurs in frames
 let time = 60 * 10; // The amount of time in frames that the game is played
-let numPlayers = 1; // starts from 0
+let numPlayers = 3; // starts from 0
 let playerTaged;
 let platformImg = [];
 let platformColor;
 let platform = [];
 let t; //time in seconds
 let playerMovementKeys = []; // player 1, 2, 3, 4
+let musicOn = false; // false = off, true = on; I did not use 0 and 1 becous its getting anoying to look back at old code
 
 // Ayeman Islam Global Variable
 let gameState = 0;// 0 = start, 1 = game is started, 2 = pause menu, 3 = end/over
@@ -72,15 +73,12 @@ function setup() {
   platform = detectPlatforms(platformColor, platformImg);
   playerMovementKeys.push([LEFT_ARROW, RIGHT_ARROW, UP_ARROW, DOWN_ARROW], [65, 68, 87, 83], [74, 76, 73, 75], [70, 72, 84, 71]);
   buttonSetup();
-  
+
 }
 
 function draw() {
-  // Pause game logic (80 is the keycode for 'P' refering to pause)
-  if (gameState === 1 && keyIsDown(80)) {
-    gameState = 2;
-  }
-
+  
+  
   // Drawing the screen based on the gameState
   if (gameState === 0) {
     startMenu();
@@ -105,45 +103,24 @@ function draw() {
   hideOrShowButtons();
 }
 
-function endScreen() {
-  // The end screen for who won
-  // overlays who lost on a side and who one on a podioum
-  
-  fill(50, 100, 150, 65);
-  rect(0, 0, width, height); // creating background
-  textAlign(CENTER, CENTER);
-  fill(255);
-  textSize(150);
-  text("GAME OVER", width / 2, height / 2 - 250); // title screen
-
-  for (let i = 0; i < players.length; i++) {
-    if (players[i].isTaged === 1) {
-      
-      // Display the loser in the center
-      let loserImg = playerImgs[i][0][0];
-      image(loserImg, width / 2 - 75, height / 2 - 90, 150, 225);
-      
-
-      // Display the loser's name
-      textSize(35);
-      fill(255, 50, 50);
-      textFont('Arial')
-      text("PLAYER " + (i + 1) + " LOST!", width / 2, height / 2 + 150);
-      
-      // Stop the game loop for everyone
-      players[i].gameOver = 0;
+function keyPressed(){
+  // Pause game logic (80 is the keycode for 'P' refering to pause) 
+  if (keyIsDown(80)) {
+    if (gameState === 1) {
+      gameState = 2; //sets to pause menu
+      pauseGame();
+    }
+    else {
+      gameState = 1; //continues game
     }
   }
 
-
-  for (let p in players) {
-    players[p].gameEnd();
+  if (keyIsDown(77)){ // if press M then pause and play music
+    if(musicOn) musicOn = false;
+    else musicOn = true;
   }
-  gameState = 3; // game is over
-  endButton.position(400, 400);
-
-
 }
+
 
 function timer() {
   // This function is responsable for all time related code
