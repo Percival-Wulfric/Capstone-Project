@@ -41,8 +41,8 @@ function preload() {
   // called BEFORE SETUP. Won't conclude.
   // Until all loads are complete.
 
-  map = loadImage("assets/Map-" + numMap + "/map.jpg");
-  platformImg = loadImage("assets/Map-" + numMap + "/platforms.jpg");
+  map = loadImage("assets/Map-" + numMap + "/map.png");
+  platformImg = loadImage("assets/Map-" + numMap + "/platforms.png");
 
   // loading music on and music off icons - Ayeman
   musicOnImg = loadImage("assets/music-icons/MusicOn.png");
