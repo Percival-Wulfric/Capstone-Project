@@ -14,7 +14,9 @@ let platformColor;
 let platform = [];
 let t; //time in seconds
 let playerMovementKeys = []; // player 1, 2, 3, 4
-let musicOn = false; // false = off, true = on; I did not use 0 and 1 becous its getting anoying to look back at old code
+let musicOn = true; // false = off, true = on; I did not use 0 and 1 becous its getting anoying to look back at old code
+let music;
+let musicVolume = 70 / 100; // the first number is what volume you desire so 95% or 100%
 
 // Ayeman Islam Global Variable
 let gameState = 0;// 0 = start, 1 = game is started, 2 = pause menu, 3 = end/over
@@ -46,6 +48,9 @@ function preload() {
   musicOnImg = loadImage("assets/music-icons/MusicOn.png");
   musicOffImg = loadImage("assets/music-icons/MusicOff.png");
 
+  // loading music
+  music = loadSound("assets/Map-" + numMap + "/music.mp3");
+
   // player imgs
   for (let n = 0; n <= numPlayers; n++) { //loop thrue players
     playerImgs.push([]); // player array
@@ -64,6 +69,7 @@ function preload() {
 
 function setup() {
   createCanvas(1912, 1076);
+  music.setVolume(1);
   pixelDensity(1); frameRate(60);
   noStroke();
   for (let i = 0; i <= numPlayers; i++) {
@@ -96,6 +102,15 @@ function draw() {
     }
     fill(0);
     text(t, width / 2, 100);
+
+    if(musicOn) {
+      music.play();
+      music.setVolume(musicVolume);
+    }
+    else{
+      music.pause();
+      music.setVolume(0);
+    } 
   }
   else if (gameState === 2) pauseGame();
   else if (gameState === 3) endScreen();
@@ -139,7 +154,7 @@ function timer() {
 }
 
 function powerUps() {
-  // This function handles overups
+  // This function handles pover ups
 
 
 }

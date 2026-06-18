@@ -179,7 +179,6 @@ class Player {
       image(img, this.pos.x, this.pos.y);
     }
     pop();
-    
 
     // go to the player imgs then in that go to the charcter 
     // and in that go to the img set of the current action then do the img on which fram of animation we shoud be one 
@@ -255,7 +254,6 @@ class Player {
   action() {
     this.movement();// update state befor changing frames
     this.show();
-    
     this.platformCollision();
   }
 } 
