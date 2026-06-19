@@ -17,6 +17,7 @@ let playerMovementKeys = []; // player 1, 2, 3, 4
 let musicOn = true; // false = off, true = on; I did not use 0 and 1 becous its getting anoying to look back at old code
 let music;
 let musicVolume = 70 / 100; // the first number is what volume you desire so 95% or 100%
+let musicIsPlaying = false; // new flag, declared at top of file
 
 // Ayeman Islam Global Variable
 let gameState = 0;// 0 = start, 1 = game is started, 2 = pause menu, 3 = end/over
@@ -102,15 +103,22 @@ function draw() {
     }
     fill(0);
     text(t, width / 2, 100);
-
-    if(musicOn) {
-      music.play();
+    //music code 
+    if (musicOn) {
+      if (!musicIsPlaying) {
+        music.play();          // only triggered ONCE, the moment music turns on
+        // if it runs every frame the game becums un playable or runs extremly porley
+        musicIsPlaying = true;
+      }
       music.setVolume(musicVolume);
     }
-    else{
-      music.pause();
+    else {
+      if (musicIsPlaying) {
+        music.pause();
+        musicIsPlaying = false;
+      }
       music.setVolume(0);
-    } 
+    }
   }
   else if (gameState === 2) pauseGame();
   else if (gameState === 3) endScreen();
